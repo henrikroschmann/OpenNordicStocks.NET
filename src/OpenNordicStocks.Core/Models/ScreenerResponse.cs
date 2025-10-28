@@ -1,0 +1,46 @@
+namespace OpenNordicStocks.Core.Models;
+
+
+public sealed class ScreenerResponse
+{
+    public ScreenerData? Data { get; set; }
+}
+
+public sealed class ScreenerData
+{
+    public InstrumentListing? InstrumentListing { get; set; }
+}
+
+public sealed class InstrumentListing
+{
+    public List<StockQuote>? Rows { get; set; }
+    public long? TotalRecords { get; set; }
+    public int? TotalPages { get; set; }
+}
+
+public class StockQuote
+{
+    public string FullName { get; set; } = string.Empty;
+    public string Currency { get; set; } = string.Empty;
+
+    public decimal? NetChange { get; set; }
+    public string PercentageChange { get; set; } = string.Empty;
+
+    public decimal? BidPrice { get; set; }
+    public decimal? AskPrice { get; set; }
+    public decimal? LastSalePrice { get; set; }
+
+    public decimal? High { get; set; }
+    public decimal? Low { get; set; }
+
+    public long? Volume { get; set; }
+    public decimal? Turnover { get; set; }
+
+    public string OrderbookId { get; set; } = string.Empty;
+    public string AssetClass { get; set; } = string.Empty;
+    public string Symbol { get; set; } = string.Empty;
+    public string Sector { get; set; } = string.Empty;
+    public string Isin { get; set; } = string.Empty;
+    public string DeltaIndicator { get; set; } = string.Empty;
+}
+

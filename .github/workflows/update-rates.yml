@@ -1,0 +1,60 @@
+name: Update Nordic Stock Data
+
+on:
+  schedule:
+    # Run daily at 16:00 UTC (after Nordic markets close)
+    - cron: '0 16 * * 1-5'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  update-stock-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      
+      - name: Restore dependencies
+        run: dotnet restore
+      
+      - name: Build solution
+        run: dotnet build --configuration Release --no-restore
+      
+      - name: Run Publisher
+        run: dotnet run --project src/OpenNordicStocks.Publisher/OpenNordicStocks.Publisher.csproj --configuration Release --no-build
+        continue-on-error: false
+      
+      - name: Check for data changes
+        id: check-changes
+        run: |
+          git add data/
+          if git diff --staged --quiet; then
+            echo "No changes detected"
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected"
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push updated stock data
+        if: steps.check-changes.outputs.has-changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Update Nordic stock data - $(date -u +%Y-%m-%d)"
+          git push
