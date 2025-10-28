@@ -15,6 +15,10 @@ builder.Services.AddHttpClient<StockDataProvider>(options =>
     options.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     options.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, br");
     options.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.9");
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    AutomaticDecompression = System.Net.DecompressionMethods.All
 });
 
 builder.Services.AddLogging(logging =>
