@@ -1,0 +1,48 @@
+{
+  "date": "2025-10-28T00:00:00Z",
+  "stocks": [
+    {
+      "symbol": "VOLV-B",
+      "name": "Volvo AB",
+      "price": 245.50,
+      "market": "OMX Stockholm",
+      "currency": "SEK",
+      "timestamp": "2025-10-28T17:37:44.7434313Z",
+      "volume": 1500000,
+      "change": 2.50,
+      "changePercent": 1.03
+    },
+    {
+      "symbol": "NOKIA",
+      "name": "Nokia Corporation",
+      "price": 3.45,
+      "market": "OMX Helsinki",
+      "currency": "EUR",
+      "timestamp": "2025-10-28T17:37:44.7436065Z",
+      "volume": 5000000,
+      "change": -0.05,
+      "changePercent": -1.43
+    },
+    {
+      "symbol": "NOVO-B",
+      "name": "Novo Nordisk B",
+      "price": 825.00,
+      "market": "OMX Copenhagen",
+      "currency": "DKK",
+      "timestamp": "2025-10-28T17:37:44.743607Z",
+      "volume": 800000,
+      "change": 12.50,
+      "changePercent": 1.54
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "generatedAt": "2025-10-28T17:37:44.743672Z",
+    "totalCount": 3,
+    "markets": [
+      "OMX Stockholm",
+      "OMX Helsinki",
+      "OMX Copenhagen"
+    ]
+  }
+}
