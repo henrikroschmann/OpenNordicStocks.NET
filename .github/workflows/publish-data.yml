@@ -1,0 +1,42 @@
+name: Publish Stock Data
+
+on:
+  schedule:
+    # Run daily at 6:00 PM UTC (after Nordic markets close)
+    - cron: '0 18 * * 1-5'
+  workflow_dispatch: # Allow manual triggering
+
+permissions:
+  contents: write
+
+jobs:
+  publish-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+          
+      - name: Restore dependencies
+        run: dotnet restore
+        
+      - name: Build solution
+        run: dotnet build --configuration Release --no-restore
+        
+      - name: Run Publisher
+        run: |
+          export DATA_DIRECTORY="${GITHUB_WORKSPACE}/data"
+          dotnet run --project src/OpenNordicStocks.Publisher/OpenNordicStocks.Publisher.csproj --configuration Release --no-build
+        
+      - name: Commit and push data
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/
+          git diff-index --quiet HEAD || git commit -m "Update stock data - $(date +'%Y-%m-%d')"
+          git push
