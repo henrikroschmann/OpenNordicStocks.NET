@@ -1,0 +1,63 @@
+<Project>
+  <!-- Package metadata only for main project -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'OpenNordicStocks.Client'">
+    <!-- Package Metadata -->
+    <PackageId>OpenNordicStocks.NET</PackageId>
+    <Title>OpenNordicStocks.NET - Nordic Stock Market Data</Title>
+    <Description>
+      OpenNordicStocks.NET is an open-source .NET library and data service providing daily and historical stock market data from Nasdaq Nordic exchanges. Free, cacheable, and CDN-ready.
+    </Description>
+    <Authors>Henrik Roschmann</Authors>
+    <Company>Henrik Roschmann</Company>
+    <Product>OpenNordicStocks.NET</Product>
+    <Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
+    <!-- Package Details -->
+    <PackageTags>stocks;nasdaq;nordic;open-source;dotnet;library;data-service;stock-market</PackageTags>
+    <PackageProjectUrl>https://github.com/henrikroschmann/OpenNordicStocks.NET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/henrikroschmann/OpenNordicStocks.NET</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>See https://github.com/henrikroschmann/OpenNordicStocks.NET/releases</PackageReleaseNotes>
+    <!-- NuGet Package Options -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+  <!-- Common build configuration for all projects -->
+  <PropertyGroup>
+    <!-- Build Configuration -->
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>CS1591</NoWarn>
+    <!-- Missing XML comment warnings -->
+    <!-- Deterministic Build -->
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'"
+      >true</ContinuousIntegrationBuild
+    >
+  </PropertyGroup>
+  <!-- Package content only for main project -->
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'OpenNordicStocks.Client'">
+    <!-- Include README in package -->
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="/" />
+    <!-- SourceLink for debugging -->
+    <PackageReference
+      Include="Microsoft.SourceLink.GitHub"
+      Version="8.0.0"
+      PrivateAssets="All"
+      Condition="'$(GITHUB_ACTIONS)' == 'true'"
+    />
+  </ItemGroup>
+  <!-- Code Analysis -->
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+</Project>
