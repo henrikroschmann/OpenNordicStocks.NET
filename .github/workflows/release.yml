@@ -1,0 +1,90 @@
+name: Release & Publish to NuGet
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  CONFIGURATION: Release
+
+jobs:
+  release:
+    name: Build, Pack & Publish
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Extract version from tag
+      id: get_version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Releasing version: $VERSION"
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build solution
+      run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore /p:Version=${{ steps.get_version.outputs.VERSION }}
+    
+    - name: Run tests
+      run: dotnet test --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
+    
+    - name: Create NuGet package
+      run: dotnet pack --configuration ${{ env.CONFIGURATION }} --no-build --output ./artifacts /p:PackageVersion=${{ steps.get_version.outputs.VERSION }}
+    
+    - name: Publish to NuGet
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      if: success()
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./artifacts/*.nupkg
+        generate_release_notes: true
+        body: |
+          ## OpenNordicStocks.NET v${{ steps.get_version.outputs.VERSION }}
+          
+          Open-source .NET library and data service providing daily and historical stock market data from Nasdaq Nordic exchanges.
+          
+          ### 📦 Installation
+          ```bash
+          dotnet add package OpenNordicStocks.NET --version ${{ steps.get_version.outputs.VERSION }}
+          ```
+          
+          ### 📊 Data Coverage
+          - **Nasdaq Nordic** exchanges (Stockholm, Helsinki, Copenhagen, Iceland)
+          - **241+ stocks** from main markets
+          - **Real-time** daily updates via GitHub Actions
+          - **Historical data** with dated snapshots
+          
+          ### 🔍 Features
+          - Type-safe stock quote models with full metadata
+          - Async/await with cancellation support
+          - Hybrid caching for performance
+          - HTTP client integration with automatic decompression
+          - Pagination support for large datasets
+          - Comprehensive error handling and logging
+          
+          ### 📝 What's Changed
+          See full changelog below.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Upload package artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages
+        path: ./artifacts/*.nupkg
+        retention-days: 90
