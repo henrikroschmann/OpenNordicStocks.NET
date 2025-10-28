@@ -1,56 +1,55 @@
+using System.Net.Http.Json;
+using System.Text.Json;
+using Microsoft.Extensions.Caching.Hybrid;
+using OpenNordicStocks.Client.Models;
+
 namespace OpenNordicStocks.Client;
 
-using OpenNordicStocks.Core.Models;
-using System.Text.Json;
-
-/// <summary>
-/// Client for consuming stock data from OpenNordicStocks CDN
-/// </summary>
-public class OpenNordicStocksClient
+public sealed class OpenNordicStocksClient(HttpClient http, HybridCache cache) : IOpenNordicStocksClient
 {
-    private readonly HttpClient _httpClient;
-    private readonly string _baseUrl;
+    private readonly HttpClient _http = http ?? throw new ArgumentNullException(nameof(http));
+    private readonly HybridCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
 
-    /// <summary>
-    /// Initializes a new instance of the OpenNordicStocksClient
-    /// </summary>
-    /// <param name="httpClient">HTTP client for making requests</param>
-    /// <param name="baseUrl">Base URL for the CDN (default: https://cdn.opennordicstocks.net)</param>
-    public OpenNordicStocksClient(HttpClient? httpClient = null, string? baseUrl = null)
+    public async Task<List<StockQuote>> GetRateAsync(DateTime? at = null, CancellationToken token = default)
     {
-        _httpClient = httpClient ?? new HttpClient();
-        _baseUrl = baseUrl ?? "https://cdn.opennordicstocks.net";
-    }
+        var effectiveDate = at?.Date ?? DateTime.UtcNow.Date;
+        var key = $"opennordicstocks-{effectiveDate:yyyy-MM-dd}";
 
-    /// <summary>
-    /// Gets the latest stock data snapshot
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Latest stock snapshot</returns>
-    public async Task<StockSnapshot?> GetLatestSnapshotAsync(CancellationToken cancellationToken = default)
-    {
-        var url = $"{_baseUrl}/data/latest.json";
-        var response = await _httpClient.GetAsync(url, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        
-        var content = await response.Content.ReadAsStringAsync(cancellationToken);
-        return JsonSerializer.Deserialize<StockSnapshot>(content);
-    }
+        return await _cache.GetOrCreateAsync(
+            key,
+            async cancel =>
+            {
+                var dateSegment = at?.ToString("yyyy-MM-dd") ?? "latest";
+                var url = $"https://cdn.jsdelivr.net/gh/henrikroschmann/OpenNordicStocks.NET@main/data/{dateSegment}.json";
 
-    /// <summary>
-    /// Gets stock data snapshot for a specific date
-    /// </summary>
-    /// <param name="date">The date to fetch data for</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Stock snapshot for the specified date</returns>
-    public async Task<StockSnapshot?> GetSnapshotForDateAsync(DateTime date, CancellationToken cancellationToken = default)
-    {
-        var dateString = date.ToString("yyyy-MM-dd");
-        var url = $"{_baseUrl}/data/{dateString}.json";
-        var response = await _httpClient.GetAsync(url, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        
-        var content = await response.Content.ReadAsStringAsync(cancellationToken);
-        return JsonSerializer.Deserialize<StockSnapshot>(content);
+                try
+                {
+                    var stockQuotes = await _http.GetFromJsonAsync<List<StockQuote>>(url, cancel);
+
+                    return stockQuotes is null
+                        ? throw new InvalidOperationException(
+                            $"Received null response when fetching stock data for {dateSegment}")
+                        : stockQuotes;
+                }
+                catch (HttpRequestException ex)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to fetch stock data for {dateSegment}",
+                        ex);
+                }
+                catch (JsonException ex)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to parse stock data response for {dateSegment}",
+                        ex);
+                }
+            },
+            new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.FromHours(6),
+                LocalCacheExpiration = TimeSpan.FromHours(1),
+            },
+            cancellationToken: token
+        );
     }
 }
