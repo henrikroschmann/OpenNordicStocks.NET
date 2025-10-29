@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/StableId.svg)](https://www.nuget.org/packages/StableId/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[![NuGet](https://img.shields.io/nuget/v/OpenNordicStocks.NET.svg)](https://www.nuget.org/packages/OpenNordicStocks.NET/)
+[![NuGet](https://img.shields.io/nuget/v/OpenNordicStocks.Client.svg)](https://www.nuget.org/packages/OpenNordicStocks.Client/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 OpenNordicStocks.NET is an open-source .NET service and SDK providing daily and historical stock data for Sweden, Denmark, and Finland (NASDAQ Nordic OMX). Free, cacheable, and CDN-ready — designed for developers and analysts who need reliable Nordic market data.
