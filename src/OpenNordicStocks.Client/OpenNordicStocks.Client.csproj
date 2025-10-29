@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\OpenNordicStocks.Core\OpenNordicStocks.Core.csproj" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -20,7 +16,12 @@
     <PackageTags>stocks;nordic;nasdaq;omx;finland;sweden;denmark;client;sdk</PackageTags>
   </PropertyGroup>
 
-	<ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\OpenNordicStocks.Core\OpenNordicStocks.Core.csproj" Pack="true" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.10.0" />
 	</ItemGroup>
 
