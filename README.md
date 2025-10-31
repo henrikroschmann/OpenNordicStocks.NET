@@ -29,14 +29,18 @@ dotnet add package OpenNordicStocks.Client
 ```csharp
 using OpenNordicStocks.Client;
 
-var client = new OpenNordicStocksClient();
+var services = new ServiceCollection();
+
+services.AddHttpClient<IOpenNordicStocksClient, OpenNordicStocksClient>();
+services.AddHybridCache();
+
+var provider = services.BuildServiceProvider();
+var client = provider.GetRequiredService<IOpenNordicStocksClient>();
 
 // Get latest stock data
-var latestSnapshot = await client.GetLatestSnapshotAsync();
-Console.WriteLine($"Total stocks: {latestSnapshot.Stocks.Count}");
+var latestSnapshot = await client.GetRateAsync();
 
-// Get data for a specific date
-var historicalSnapshot = await client.GetSnapshotForDateAsync(new DateTime(2025, 10, 28));
+Console.WriteLine(latestSnapshot);
 ```
 
 ### OpenNordicStocks.Publisher
