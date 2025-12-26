@@ -18,11 +18,11 @@
 
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenNordicStocks.Core\OpenNordicStocks.Core.csproj" Pack="true" PrivateAssets="all"/>
+        <ProjectReference Include="..\OpenNordicStocks.Core\OpenNordicStocks.Core.csproj" Pack="true" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.10.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.1.0" />
 	</ItemGroup>
 
 </Project>
