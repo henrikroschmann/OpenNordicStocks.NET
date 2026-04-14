@@ -1,28 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageId>OpenNordicStocks.Client</PackageId>
-    <Version>0.1.0</Version>
-    <Authors>Henrik Roschmann</Authors>
-    <Company>OpenNordicStocks</Company>
-    <Description>NuGet SDK for consuming Nordic stock market data from OpenNordicStocks.NET</Description>
-    <PackageProjectUrl>https://github.com/henrikroschmann/OpenNordicStocks.NET</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/henrikroschmann/OpenNordicStocks.NET</RepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>stocks;nordic;nasdaq;omx;finland;sweden;denmark;client;sdk</PackageTags>
-  </PropertyGroup>
-
-
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <PackageId>OpenNordicStocks.Client</PackageId>
+        <Version>0.1.0</Version>
+        <Authors>Henrik Roschmann</Authors>
+        <Company>OpenNordicStocks</Company>
+        <Description>NuGet SDK for consuming Nordic stock market data from OpenNordicStocks.NET</Description>
+        <PackageProjectUrl>https://github.com/henrikroschmann/OpenNordicStocks.NET</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/henrikroschmann/OpenNordicStocks.NET</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageTags>stocks;nordic;nasdaq;omx;finland;sweden;denmark;client;sdk</PackageTags>
+    </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\OpenNordicStocks.Core\OpenNordicStocks.Core.csproj" Pack="true" PrivateAssets="all" />
+        <ProjectReference
+            Include="..\OpenNordicStocks.Core\OpenNordicStocks.Core.csproj"
+            Pack="true"
+            PrivateAssets="all"
+        />
     </ItemGroup>
-
     <ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.4.0" />
-	</ItemGroup>
-
+        <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.4.0" />
+    </ItemGroup>
 </Project>
